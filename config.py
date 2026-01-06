@@ -1,4 +1,5 @@
 import os
+import streamlit as st # Streamlit eklendi
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -6,9 +7,13 @@ load_dotenv()
 class AjanConfig:
     """Ajan uygulaması yapılandırma ayarları"""
     
-    # AI API Ayarları
-    # ÖNEMLİ: API anahtarları .env dosyasından alınır, kod içinde hardcode edilmez!
-    GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
+    # --- KRİTİK DEĞİŞİKLİK ---
+    # Önce Streamlit Secrets'a bak, bulamazsan .env/Environment Variables'a bak
+    if "GOOGLE_API_KEY" in st.secrets:
+        GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
+    else:
+        GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
+
     GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
     AI_PROVIDER = os.getenv("AI_PROVIDER", "gemini").lower()
     
@@ -37,7 +42,7 @@ class AjanConfig:
     def validate(cls):
         """API anahtarlarının varlığını kontrol et"""
         if cls.AI_PROVIDER == "gemini" and not cls.GOOGLE_API_KEY:
-            raise ValueError("GOOGLE_API_KEY bulunamadı! .env dosyasını kontrol edin.")
-        elif cls.AI_PROVIDER == "groq" and not cls.GROQ_API_KEY:
-            raise ValueError("GROQ_API_KEY bulunamadı! .env dosyasını kontrol edin.")
-        print(f"✓ Ajan yapılandırması doğrulandı - Provider: {cls.AI_PROVIDER}")
+            raise ValueError("GOOGLE_API_KEY bulunamadı! Lütfen Streamlit Secrets veya .env dosyasını kontrol edin.")
+        
+        # Streamlit'te print konsolda görünmez, st.write veya st.toast kullanabilirsin ama validate sessizce geçsin
+        return True
