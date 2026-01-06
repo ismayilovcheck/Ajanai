@@ -3,3 +3,5 @@ google-generativeai
 python-dotenv
 beautifulsoup4
 requests
+plotly
+pandas
